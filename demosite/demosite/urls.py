@@ -25,11 +25,16 @@ from rest_framework import routers, serializers, viewsets
 router = routers.DefaultRouter()
 router.register(r'pokemon', PokemonViewSet)
 
+def trigger_error(request):
+    division_by_zero = 1 / 0
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
 
     path('api/', include(router.urls)),
+
+    path('sentry-debug/', trigger_error),
 
     path('', views.index, name='index'),
 ]
