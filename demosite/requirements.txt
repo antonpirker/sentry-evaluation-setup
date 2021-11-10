@@ -8,5 +8,6 @@ djangorestframework==3.12.2
 django-cors-headers==3.6.0
 
 # Production deployment
+psycopg2-binary
 gunicorn==20.0.4
 whitenoise==5.2.0

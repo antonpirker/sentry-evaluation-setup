@@ -17,13 +17,13 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 DATA_DIR = os.environ.get("DEMOSITE_DATA_DIR", None)
 if DATA_DIR:
     DATA_DIR = Path(DATA_DIR)
 else:
     DATA_DIR = Path(__file__).resolve().parent.parent.parent / 'data',
 
+IN_DOCKER_COMPOSE = bool(os.environ.get('IN_DOCKER_COMPOSE'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
@@ -35,7 +35,7 @@ SECRET_KEY = 'well-known'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'localhost',
+    '*' if IN_DOCKER_COMPOSE else 'localhost',
 ]
 
 ADMINS = [
@@ -92,12 +92,24 @@ WSGI_APPLICATION = 'demosite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if IN_DOCKER_COMPOSE:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'demosite',
+            'USER': 'demosite',
+            'PASSWORD': 'demosite',
+            'HOST': 'postgres',
+            'PORT': '5432',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation

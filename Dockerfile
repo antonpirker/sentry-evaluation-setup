@@ -11,7 +11,7 @@ FROM python:3-alpine
 WORKDIR /app
 
 # install system dependencies
-RUN apk update && apk add python3-dev gcc libc-dev geos
+RUN apk update && apk add python3-dev gcc libc-dev postgresql-dev
 
 # install project requirements
 COPY demosite/requirements.txt ./
@@ -23,11 +23,12 @@ COPY docker-entrypoint.sh docker-entrypoint.sh
 
 ENV DEMOSITE_DATA_DIR /app
 
-RUN python ./manage.py collectstatic --clear --no-input && python ./manage.py migrate --no-input && python ./manage.py initadmin
+ARG IN_DOCKER_COMPOSE="False"
+ENV IN_DOCKER_COMPOSE=$IN_DOCKER_COMPOSE
+
+RUN python ./manage.py collectstatic --clear --no-input
 
 EXPOSE 8000
-
-RUN ls -alh /app
 
 ENTRYPOINT ["sh", "/app/docker-entrypoint.sh"]
 

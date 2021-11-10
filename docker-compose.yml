@@ -1,0 +1,26 @@
+version: "3.7"
+services:
+    gunicorn:
+      build: 
+        context: .
+        args:
+          IN_DOCKER_COMPOSE: "True"
+      ports:
+      - "8000:8000"
+      depends_on:
+          - postgres
+      links:
+          - postgres
+
+    postgres:
+        image: postgres:14-alpine
+        volumes:
+            - postgres_data:/var/lib/postgresql/data/
+        environment:
+            POSTGRES_USER: demosite
+            POSTGRES_PASSWORD: demosite
+            POSTGRES_DB: demosite
+        restart: unless-stopped
+
+volumes:
+    postgres_data:
